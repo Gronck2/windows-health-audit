@@ -15,6 +15,7 @@ Claude collects data with bundled PowerShell scripts, finds causes (not just sym
 - Disk: health, TRIM, space hogs (WSL vhdx, caches, dumps, benchmarks, Downloads)
 - Windows Update / Microsoft Store install loops
 - Mystery pop-up windows: optional persistent watcher (WinWatch) that logs every new window and console with the process that launched it
+- Network for gaming: Wi-Fi adapter tuning (preferred band, roaming, power saving), DNS speed comparison, router channel / QoS / DNS guidance, ping under load
 
 ## Install
 

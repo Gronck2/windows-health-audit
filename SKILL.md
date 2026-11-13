@@ -1,6 +1,6 @@
 ---
 name: windows-health-audit
-description: Read-only health and optimization audit of a Windows 10/11 PC or laptop, followed by a structured report so the user chooses what to apply. Covers spontaneous reboots and BSODs (Kernel-Power 41, bugcheck codes, GPU TDR / nvlddmkm / amdkmdag, Modern Standby crashes), crash dumps and WinDbg analysis, crashing apps, power plan and sleep/hibernate, startup items, services, scheduled tasks (including vendor tasks that switch themselves back on), disk space hogs (WSL vhdx, caches, leftover benchmarks, dumps), Store update loops and mystery pop-up windows. Use it whenever the user asks to check, diagnose, speed up, clean up or optimize Windows or their PC/laptop, look at the system/event log, find out why the PC reboots, crashes, freezes or shows random windows, or asks "what else can we optimize", even if they never say "audit". Russian triggers: проверь систему, системный журнал, почему перезагружается, синий экран, оптимизировать винду, что можно почистить, глубже проанализировать систему.
+description: Read-only health and optimization audit of a Windows 10/11 PC or laptop, followed by a structured report so the user chooses what to apply. Covers spontaneous reboots and BSODs (Kernel-Power 41, bugcheck codes, GPU TDR / nvlddmkm / amdkmdag, Modern Standby crashes), crash dumps and WinDbg analysis, crashing apps, power plan and sleep/hibernate, startup items, services, scheduled tasks (including vendor tasks that switch themselves back on), disk space hogs (WSL vhdx, caches, leftover benchmarks, dumps), Store update loops, mystery pop-up windows, and network for gaming (Wi-Fi adapter tuning, router channel/QoS/DNS, ping spikes under load). Use it whenever the user asks to check, diagnose, speed up, clean up or optimize Windows or their PC/laptop, look at the system/event log, find out why the PC reboots, crashes, freezes or shows random windows, or asks "what else can we optimize", even if they never say "audit". Russian triggers: проверь систему, системный журнал, почему перезагружается, синий экран, оптимизировать винду, что можно почистить, глубже проанализировать систему, настроить роутер, скачет пинг, Wi-Fi, DNS, QoS.
 ---
 
 # Windows health audit
@@ -35,7 +35,8 @@ Open the matching section of `references/checks.md`:
 - crash reboots → bugcheck codes, correlation with sleep/wake (Kernel-Power 506/507), dump analysis via `scripts/analyze-dumps.ps1`;
 - app crashes → Application 1000 and CrashDumps, a shared stack across different apps;
 - disk space → "safe to delete" vs "do not touch" tables;
-- pop-up windows → one-off watch or the persistent WinWatch.
+- pop-up windows → one-off watch or the persistent WinWatch;
+- network and ping → Wi-Fi adapter settings, router (channel, QoS, DNS), ping under load (section 12).
 
 Every hypothesis needs evidence: event time, stack, setting value. "Probably a driver" is not a conclusion.
 

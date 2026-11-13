@@ -12,6 +12,7 @@ Contents:
 9. Windows Update and Microsoft Store
 10. Pop-up windows
 11. Background noise not worth fixing
+12. Network: Wi-Fi adapter, router, DNS, QoS
 
 ---
 
@@ -138,3 +139,32 @@ Start with free space and health (`Get-PhysicalDisk`, `Get-StorageReliabilityCou
 - `BitLocker-Driver 24641` on every boot — usually harmless on Home editions with device encryption.
 - `Firewall 2042 Config Read Failed` — noise.
 - Defender "Not running" / passive when a third-party antivirus is installed — normal.
+
+## 12. Network: Wi-Fi adapter, router, DNS, QoS
+
+For gaming, what matters is **stable ping**, not bandwidth: an online game uses < 1 Mbit/s, so even 100 Mbit ports are plenty. The key metric is ping **under load** (speedtest "loaded" / download latency), not speed.
+
+**Laptop (no admin):**
+- Gateway and address: `Get-NetIPConfiguration | ? IPv4DefaultGateway`.
+- Adapter settings: `Get-NetAdapterAdvancedProperty -Name '<name>'` — check `ValidDisplayValues` / `ValidRegistryValues`.
+- Link rate: `Get-NetAdapter` → `LinkSpeed`. 866.7 Mbit/s = Wi-Fi 5, 80 MHz, 2x2 — the maximum for a Wi-Fi 5 router; well below that means weak signal, 2.4 GHz, or 40/20 MHz width.
+- Wireless adapter power plan setting: `powercfg /q SCHEME_CURRENT 19cbb8fa-5279-450e-9fac-8a3d5fedd0c1 12bbebe6-58d6-4636-95bb-3217ef867c1a` (0 = maximum performance).
+- DNS comparison: `Measure-Command { Resolve-DnsName <name> -Server <ip> -DnsOnly -NoHostsFile }` over 5–10 domains against the current DNS, `1.1.1.1`, `8.8.8.8`. DNS does not change in-game ping — only page loads and connection setup.
+
+**Adapter candidate changes (MediaTek MT7922 keywords; Intel / Realtek have similar ones):**
+| Keyword | Gaming value | Why |
+|---|---|---|
+| `PreferredBand` | 5 GHz (RegistryValue 2) | don't hop to 2.4 GHz |
+| `RoamIndicateTh` | Lowest (1) | with a single access point, frequent background roaming scans cause ping spikes |
+| `LowPowerEnable` | Disabled (0) | adapter doesn't doze between packets; slightly higher battery drain |
+
+Don't set `BandSelection = 5G Only` — it removes the 2.4 GHz fallback. Changing these drops Wi-Fi for 5–10 s and needs admin. Verify afterwards: `LinkSpeed` + `Test-Connection <gateway>`.
+
+**Router (the user changes it in the web UI — give step-by-step items):**
+- 5 GHz: fixed channel 36–48 (take the one "Auto" picked), 80 MHz width. 2.4 GHz: channel 1/6/11, 20 MHz.
+- Encryption WPA2-Personal instead of mixed WPA/WPA2 (TKIP limits speed).
+- Manual DNS on the router (applies to every device). On Xiaomi, "Additional ISP Settings" is VLAN/IPTV profiles, not DNS — leave it at None.
+- **QoS** is the main fix for ping spikes when someone else on the network downloads. Order: speedtest **without** QoS (note download/upload and loaded ping) → enter 85–90% of the measured speed in QoS → "Game first" mode or device priority → speedtest again. Success = loaded ping drops (example: 81 → 7 ms while speed went 67 → 52 Mbit/s). If speed drops a lot and ping doesn't improve, the router CPU is too weak — turn QoS off.
+- On Xiaomi stock firmware, Wi-Fi / DNS / QoS changes don't reboot the router: only Wi-Fi or WAN drops for a few seconds.
+- Placement: metal, an electrical panel, the floor or a closed cabinet hurt the signal; a nearby power outlet does not. If `LinkSpeed` at the play spot is already at the maximum, don't move the router.
+- The best fix for competitive play is Ethernet.

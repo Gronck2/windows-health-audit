@@ -19,6 +19,11 @@ Each item here is a real mistake that broke a result or wasted time.
 - `wsl.exe` output contains NUL characters: `-replace "`0",""`.
 - `Select-Object` with numeric property names (`01`, `2048` in StorageSense) fails — read via `.PSObject.Properties`.
 
+## Network
+- `Set-NetAdapterAdvancedProperty -DisplayValue '<text>'` is fragile on localized drivers: strings differ in small details (`5ГГц` vs `5 ГГц`), and table output wraps lines and hides spaces. Set values with `-RegistryValue` (indexes from `ValidRegistryValues`).
+- `netsh wlan show interfaces` doesn't show channel/signal without Windows location services on and admin rights. Use `Get-NetAdapter` → `LinkSpeed` instead.
+- `Get-NetAdapterPowerManagement` on MT7922 fails with "A device attached to the system is not functioning" (Win32 error 31) — that does not mean the adapter is broken.
+
 ## Git Bash next to PowerShell
 - `sed` with `C:\test` in the replacement turns `\t` into a tab. Use an editor tool or forward slashes for paths.
 - Commands the user runs via `! ` in Claude Code go through bash: give paths with forward slashes (`"C:/path/..."`), otherwise backslashes may be lost. Question marks instead of non-Latin text in `!` output are a console encoding issue, not an error.
